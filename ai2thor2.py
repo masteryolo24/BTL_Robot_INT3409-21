@@ -11,9 +11,12 @@ import argparse
 import sys
 rotation = 0
 horizon =0
-r = 255
-g = 70
-b = 0
+r1 = 255
+g1 = 70
+b1 = 0
+r2 = 100
+g2 = 0
+b2 = 255
 class ThorPositionTo2DFrameTranslator(object):
     def __init__(self, frame_shape, cam_position, orth_size):
         self.frame_shape = frame_shape
@@ -216,7 +219,7 @@ def save_topview_image(args):
     print(x, y)
     
     def on_press(key):
-        global rotation, horizon, event, x, y, image, r, g ,b 
+        global rotation, horizon, event, x, y, image, r1, g1 ,b1, r2, g2, b2 
         print(x, y)
         try:
             
@@ -226,37 +229,145 @@ def save_topview_image(args):
                 print(event.metadata['lastActionSuccess'])
                 if event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 90.0:
                     x+=12
-                    if g < 255:
-                        g +=30
+                    if g1 < 255:
+                        g1 +=30
                     else:
-                        b +=30
-                    if b > 255:
-                        b = 0
+                        b1 +=30
+                    if b1 > 255:
+                        b1 = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 180.0:
                     y+=17
+                    if g1 < 255:
+                        g1 +=30
+                    else:
+                        b1+=30
+                    if b1 > 255:
+                        b1 = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 270.0:
                     x-=12
+                    if g1 < 255:
+                        g1 +=30
+                    else:
+                        b1 +=30
+                    if b1 > 255:
+                        b1 = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 0.0:
-                    y-=17        
-                cv2.circle(image, (x, y), 3, (r,g,b), -1)
+                    y-=17   
+                    if g1 < 255:
+                        g1 +=30
+                    else:
+                        b1 +=30
+                    if b1 > 255:
+                        b1 = 0     
+                cv2.circle(image, (x, y), 3, (r1,g1,b1), -1)
                 display_image(image)
             elif key.char == 's':
                 event = controller.step(dict(action ='MoveBack'))
                 if event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 90.0:
                     x-=12
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 180.0:
                     y-=17
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 270.0:
                     x+=12
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 0.0:
-                    y+=17        
-                cv2.circle(image, (x, y), 3, (0,255,0), -1)
+                    y+=17   
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0   
+                cv2.circle(image, (x, y), 3, (r2,g2,b2), -1)
                 display_image(image)
             elif key.char == 'd':
-                event = controller.step(dict(action = 'RotateRight'))
+                event = controller.step(dict(action = 'MoveRight'))
+                if event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 90.0:
+                    y+=17
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
+                elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 180.0:
+                    x-=12
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
+                elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 270.0:
+                    y-=17
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
+                elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 0.0:
+                    x+=12   
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0   
+                cv2.circle(image, (x, y), 3, (r2,g2,b2), -1)
                 display_image(image)
             elif key.char == 'a':
-                event = controller.step(dict(action = 'RotateLeft'))
+                event = controller.step(dict(action = 'MoveLeft'))
+                if event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 90.0:
+                    y-=17
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
+                elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 180.0:
+                    x+=12
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
+                elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 270.0:
+                    y+=17
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0
+                elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 0.0:
+                    x-=12   
+                    if g2 < 255:
+                        g2 +=30
+                    else:
+                        b2 +=30
+                    if b2 > 255:
+                        b2 = 0   
+                cv2.circle(image, (x, y), 3, (r2,g2,b2), -1)
                 display_image(image)
             elif key.char == 'p':
                 display_image(draw_box(event))
@@ -264,8 +375,8 @@ def save_topview_image(args):
                 draw_topview2(controller)
                 image = cv2.imread("topview2.png")
                 display_image(image)
-            elif key.char == 'q':
-                takePicture(event)
+            elif key.char == 'f':
+                takePicture()
         except:
             if key == keyboard.Key.up:
                 horizon -=10
@@ -274,9 +385,11 @@ def save_topview_image(args):
                 horizon +=10
                 event = controller.step(dict(action = 'Look', horizon = horizon))
             elif key == keyboard.Key.right:
-                event = controller.step(dict(action = 'MoveRight'))
+                event = controller.step(dict(action = 'RotateRight'))
+                display_image(image)
             elif key == keyboard.Key.left:
-                event = controller.step(dict(action = 'MoveLeft'))
+                event = controller.step(dict(action = 'RotateLeft'))
+                display_image(image)
 
     def on_release(key):
         if key == keyboard.Key.esc:
