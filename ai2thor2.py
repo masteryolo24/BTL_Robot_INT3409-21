@@ -1,19 +1,19 @@
 import ai2thor.controller
-import time
 import cv2
 import numpy as np
 from pynput import keyboard
-import time
 import random
 import math
 import matplotlib.pyplot as plt 
 from PIL import Image, ImageDraw, ImageChops
 import copy 
-import numpy as np
 import argparse
 import sys
 rotation = 0
 horizon =0
+r = 255
+g = 70
+b = 0
 class ThorPositionTo2DFrameTranslator(object):
     def __init__(self, frame_shape, cam_position, orth_size):
         self.frame_shape = frame_shape
@@ -34,6 +34,91 @@ class ThorPositionTo2DFrameTranslator(object):
             ),
             dtype=int,
         )
+
+def takePicture(event):
+    set_confidence = 0.1
+    set_threshold = 0.3
+    cv2.imwrite("pic.png", event.cv2img)
+    # load the COCO class labels
+    labelsPath = 'yolo-object-detection/yolo-coco/coco.names'
+    LABELS = open(labelsPath).read().strip().split("\n")
+
+    # initialize a list of colors to represent each possible class label
+    np.random.seed(42)
+    COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
+
+
+    # derive the paths to the YOLO weights and model configuration
+    weightsPath = 'yolo-object-detection/yolo-coco/yolov3.weights'
+    configPath = 'yolo-object-detection/yolo-coco/yolov3.cfg'
+
+    # load Yolo on coco dataset
+    net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
+
+    # load input Image
+    image = cv2.imread('pic.png')
+    (H, W) = image.shape[:2]
+
+    # determine only the *output* layer names that need from YOLO
+    ln = net.getLayerNames()
+    ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+
+    # construct a blob from the input image and then perform a forward
+    # pass of the YOLO object detector, giving us our bounding boxes
+    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+    net.setInput(blob)
+    layerOutputs = net.forward(ln)
+
+    # initialize our lists of detected bounding boxes, confidences, and class IDs, respectively
+    boxes = []
+    confidences = []
+    classIDs = []
+    for output in layerOutputs:
+    # loop over each of the detections
+        for detection in output:
+            # extract the class ID and confidence (i.e., probability) of
+            # the current object detection
+            scores = detection[5:]
+            classID = np.argmax(scores)
+            confidence = scores[classID]
+
+            # filter out weak predictions by ensuring the detected
+            # probability is greater than the minimum probability
+            if confidence > set_confidence:
+                # scale the bounding box coordinates back relative to the
+                # size of the image, keeping in mind that YOLO actually
+                # returns the center (x, y)-coordinates of the bounding
+                # box followed by the boxes' width and height
+                box = detection[0:4] * np.array([W, H, W, H])
+                (centerX, centerY, width, height) = box.astype("int")
+
+                # use the center (x, y)-coordinates to derive the top and
+                # and left corner of the bounding box
+                x = int(centerX - (width / 2))
+                y = int(centerY - (height / 2))
+
+                # update our list of bounding box coordinates, confidences,
+                # and class IDs
+                boxes.append([x, y, int(width), int(height)])
+                confidences.append(float(confidence))
+                classIDs.append(classID)
+    # apply non-maxima suppression to suppress weak, overlapping bounding boxes
+    idxs = cv2.dnn.NMSBoxes(boxes, confidences, set_confidence, set_threshold)
+    # ensure at least one detection exists
+    if len(idxs) > 0:
+        # loop over the indexes we are keeping
+        for i in idxs.flatten():
+            # extract the bounding box coordinates
+            (x, y) = (boxes[i][0], boxes[i][1])
+            (w, h) = (boxes[i][2], boxes[i][3])
+
+            # draw a bounding box rectangle and label on the image
+            color = [int(c) for c in COLORS[classIDs[i]]]
+            cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
+            text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
+            cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+    cv2.imshow("Image", image)
+    cv2.waitKey(1)
 
 def parse_arguments(argv):
     parser = argparse.ArgumentParser()
@@ -129,24 +214,31 @@ def save_topview_image(args):
         cv2.destroyAllWindows()
 
     print(x, y)
-
+    
     def on_press(key):
-        global rotation, horizon, event, x, y, image
+        global rotation, horizon, event, x, y, image, r, g ,b 
         print(x, y)
         try:
+            
             if key.char == 'w': 
                 event = controller.step(dict(action='MoveAhead'))
                 draw_topview2(controller)
                 print(event.metadata['lastActionSuccess'])
                 if event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 90.0:
                     x+=12
+                    if g < 255:
+                        g +=30
+                    else:
+                        b +=30
+                    if b > 255:
+                        b = 0
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 180.0:
                     y+=17
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 270.0:
                     x-=12
                 elif event.metadata['lastActionSuccess'] == True and (event.metadata['agent']['rotation']['y']) == 0.0:
                     y-=17        
-                cv2.circle(image, (x, y), 3, (255,0,0), -1)
+                cv2.circle(image, (x, y), 3, (r,g,b), -1)
                 display_image(image)
             elif key.char == 's':
                 event = controller.step(dict(action ='MoveBack'))
@@ -172,6 +264,8 @@ def save_topview_image(args):
                 draw_topview2(controller)
                 image = cv2.imread("topview2.png")
                 display_image(image)
+            elif key.char == 'q':
+                takePicture(event)
         except:
             if key == keyboard.Key.up:
                 horizon -=10
