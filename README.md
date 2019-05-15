@@ -1,9 +1,12 @@
 # ROBOT ASSIGNMENT 2
 
 ### Note:
-Do file  
 
-### First Time Setup
+
+### First Time Setup:
+```
+pip install -r requirement.txt
+```
 
 ## Challenge-01: Object detection and Classification on First View Cameras.
 
