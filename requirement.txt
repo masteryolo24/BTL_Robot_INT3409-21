@@ -1,0 +1,7 @@
+ai2thor
+pynput
+numpy
+Pillow
+argparse
+opencv-python
+matplotlib
