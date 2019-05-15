@@ -20,7 +20,15 @@ python generate_topview.py + (scene_number)
 
 ## Challenge-01: Object detection and Classification on First View Cameras.
 
+Link Download pre-traned :https://bitly.vn/3h60 (due to the BigFile)
+Once you have the Robot file, run
+'''
+sudo python AI2THOR.py
+'''
+When the First view of Robot show Up, Use W, S, A, D for Move up, down, left, right. Use Key arrow to rotate the camera of robot
 
+If you want to change Sceen, press 'q'
+You can take picture and detect Object in room whenever you want after press key 'f'
 
 ## Challenge-02: Drawing Trajectories on Top-view Map of the room.
 
