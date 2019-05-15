@@ -1,8 +1,5 @@
 # ROBOT  2
 
-### Note:
-
-
 ### First Time Setup:
 ```
 pip install -r requirement.txt
