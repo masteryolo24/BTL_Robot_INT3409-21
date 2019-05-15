@@ -13,12 +13,13 @@ event = controller.step(dict(action='Initialize', gridSize=0.25, renderObjectIma
 def takePicture(event):
 	set_confidence = 0.1
 	set_threshold = 0.3
+	# save image to disk
 	cv2.imwrite("pic.png", event.cv2img)
     # load the COCO class labels
 	labelsPath = 'yolo-object-detection/yolo-coco/coco.names'
 	LABELS = open(labelsPath).read().strip().split("\n")
 
-    # initialize a list of colors to represent each possible class label
+    # generate different colors for different classes 
 	np.random.seed(42)
 	COLORS = np.random.randint(0, 255, size=(len(LABELS), 3), dtype="uint8")
 
@@ -27,10 +28,10 @@ def takePicture(event):
 	weightsPath = 'yolo-object-detection/yolo-coco/yolov3.weights'
 	configPath = 'yolo-object-detection/yolo-coco/yolov3.cfg'
 
-	# load Yolo on coco dataset
+	# read pre-trained model and config file
 	net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
 
-	# load input Image
+	# read input Image
 	image = cv2.imread('pic.png')
 	(H, W) = image.shape[:2]
 
@@ -38,8 +39,7 @@ def takePicture(event):
 	ln = net.getLayerNames()
 	ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 
-	# construct a blob from the input image and then perform a forward
-	# pass of the YOLO object detector, giving us our bounding boxes
+	# initialization
 	blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
 	net.setInput(blob)
 	layerOutputs = net.forward(ln)
@@ -60,20 +60,15 @@ def takePicture(event):
 			# filter out weak predictions by ensuring the detected
 			# probability is greater than the minimum probability
 			if confidence > set_confidence:
-				# scale the bounding box coordinates back relative to the
-				# size of the image, keeping in mind that YOLO actually
-				# returns the center (x, y)-coordinates of the bounding
-				# box followed by the boxes' width and height
+
 				box = detection[0:4] * np.array([W, H, W, H])
 				(centerX, centerY, width, height) = box.astype("int")
 
-				# use the center (x, y)-coordinates to derive the top and
-				# and left corner of the bounding box
+				# use the center (x, y)-coordinates to derive the top and left corner of the bounding box
 				x = int(centerX - (width / 2))
 				y = int(centerY - (height / 2))
 
-				# update our list of bounding box coordinates, confidences,
-				# and class IDs
+				# update list of bounding box coordinates, confidences, and class IDs
 				boxes.append([x, y, int(width), int(height)])
 				confidences.append(float(confidence))
 				classIDs.append(classID)
@@ -92,7 +87,9 @@ def takePicture(event):
 			cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
 			text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
 			cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+	# display output image    
 	cv2.imshow("Image", image)
+	
 	cv2.waitKey(1)
 def pickUp(event):
         for o in event.metadata['objects']:
@@ -107,7 +104,7 @@ while 1:
 	if keyboard.is_pressed('right'):
 		rotate +=15
 		event = controller.step(dict(action='Rotate',rotation=rotate))
-		#time.sleep(0.1)
+		time.sleep(0.1)
 	elif keyboard.is_pressed('left'):
 		rotate -=15
 		event = controller.step(dict(action='Rotate',rotation=rotate))
