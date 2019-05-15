@@ -38,7 +38,7 @@ Controller:
 - Move: Arrow Keys
 - Change Views Rotation: W-A-S-D
 - Detect Object By YOLO: 'F' key
-- Detect Object By ai2thor metadata: P
+- Detect Object By ai2thor metadata: 'P' Key
 Note:
 Take a rest between key press to ensure the stability of application
 
