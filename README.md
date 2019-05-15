@@ -33,12 +33,12 @@ You can take picture and detect Object in room whenever you want after press key
 Overview: 
 - Capture Top-View Image
 - Display Location of Robot in map on Top-View Image
-- Update Real-time new Location of Robot each step and distinguish by RGB color
+- Update Real-time new Location of Robot each step and distinguish by RGB color<br>
 Controller:
 - Move: Arrow Keys
 - Change Views Rotation: W-A-S-D
 - Detect Object By YOLO: 'F' key
-- Detect Object By ai2thor metadata: 'P' Key
+- Detect Object By ai2thor metadata: 'P' key<br>
 Note:
 Take a rest between key press to ensure the stability of application
 
