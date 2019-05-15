@@ -15,7 +15,7 @@ python generate_topview.py + (scene_number)
 ```
 - Main:
 ```
-(sudo) python 
+(sudo) python ai2thor.py + (scene_number)
 ```
 
 ## Challenge-01: Object detection and Classification on First View Cameras.
