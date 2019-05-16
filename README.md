@@ -23,7 +23,8 @@ sudo python AI2THOR.py
 ```
 When the First view of Robot show Up, Use W, S, A, D for Move up, down, left, right. Use Key arrow to rotate the camera of robot<br>
 If you want to change Sceen, press 'q'<br>
-You can take picture and detect Object in room whenever you want after press key 'f'<br>
+Detect Object By YOLO: 'F' key<br>
+Detect Object By ai2thor metadata: 'P' key<br>
 
 ## Challenge-02: Drawing Trajectories on Top-view Map of the room.
 #### Overview: 
@@ -33,8 +34,6 @@ You can take picture and detect Object in room whenever you want after press key
 #### Controller:
 - Move: Arrow Keys
 - Change Views Rotation: W-A-S-D
-- Detect Object By YOLO: 'F' key
-- Detect Object By ai2thor metadata: 'P' key<br>
 #### Note:
 Take a rest between key press to ensure the stability of application
 
