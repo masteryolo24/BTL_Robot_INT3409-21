@@ -39,7 +39,7 @@ class ThorPositionTo2DFrameTranslator(object):
         )
 
 def takePicture(event):
-    set_confidence = 0.1
+    set_confidence = 0.2
     set_threshold = 0.3
     cv2.imwrite("pic.png", event.cv2img)
     # load the COCO class labels
@@ -120,7 +120,7 @@ def takePicture(event):
             cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
             text = "{}: {:.4f}".format(LABELS[classIDs[i]], confidences[i])
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-    cv2.imshow("Image", image)
+    cv2.imshow("ImageWithYolo", image)
     cv2.waitKey(1)
 
 def parse_arguments(argv):
