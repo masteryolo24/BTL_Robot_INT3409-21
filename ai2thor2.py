@@ -376,7 +376,7 @@ def save_topview_image(args):
                 image = cv2.imread("topview2.png")
                 display_image(image)
             elif key.char == 'f':
-                takePicture()
+                takePicture(event)
         except:
             if key == keyboard.Key.up:
                 horizon -=10
